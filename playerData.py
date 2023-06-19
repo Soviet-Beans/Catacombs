@@ -18,14 +18,11 @@ def saveGame():
     save.write(dmgStr)
 
 def loadGame():
-    gold = 0
-    hp = 0
-    ac = 0
-    dmg = 0
     load = open('playerdata.txt', 'r')
     for line in load:
         a = line.split()
         print(a)
+        global gold, hp, ac, dmg
         gold = int(a[0])
         hp = int(a[1])
         ac = int(a[2])
