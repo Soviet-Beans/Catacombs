@@ -144,12 +144,12 @@ def mainMenu():
     if playerin in ['1']:
         clearConsole()
         print('Please select floor')
-        print('')
+        print('1')
         floorSelect = input()
         if floorSelect in ['1']:
             floor1()
-        if floorSelect in ['2']:
-            floor2()
+        else:
+            print('That is an invalid input')
     elif playerin in ['2']:
         shop()
     elif playerin in ['3']:
