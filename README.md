@@ -1,4 +1,4 @@
 # Catacombs
 Text based dungeon crawler
 
-NON FUNCTIONAL
+FUNCTIONAL DEMO VERSION
