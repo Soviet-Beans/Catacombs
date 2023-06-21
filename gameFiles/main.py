@@ -16,9 +16,14 @@ enemyhp = currentEnemy.hp
 
 usedPotion = items.blankPot
 bonusDmg = 0
+bonusHp = 0
 def potionBoost():
-    global bonusDmg
+    global bonusDmg, bonusHp
     bonusDmg = usedPotion.atk
+    bonusHp = usedPotion.hp
+    playerData.hp = playerData.hp + bonusHp
+    if playerData.hp >= 10:
+        playerData.hp = 10
 
 enemyDmg = 0
 def enemyHit():
@@ -27,8 +32,9 @@ def enemyHit():
 
 playerDmg = 0
 def playerHit():
-    global playerDmg
+    global playerDmg, enemyhp
     playerDmg = playerData.dmg - currentEnemy.ac + bonusDmg
+    enemyhp = enemyhp - playerDmg
 
 def clearConsole():
     command = 'clear'
@@ -39,10 +45,9 @@ def clearConsole():
 generate = 0
 def generateDungeon():
     global generate
-    generate = random.randrange(1, 5)
+    generate = random.randrange(1, 6)
 
 def fight():
-    global enemyhp
     clearConsole()
     if playerData.hp <= 0:
         playerData.hp = 10
@@ -53,6 +58,7 @@ def fight():
         mainMenu()
     else:
         print('You encounterd a', currentEnemy.name)
+        print('You have', playerData.hp, 'HP')
         print('')
         print('What would you like to do?')
         print('')
@@ -63,7 +69,6 @@ def fight():
         print('')
         if playerIn in ['1']:
             playerHit()
-            enemyhp = enemyhp - playerDmg
             if enemyhp <= 0:
                 print(currentEnemy.name,'defeated')
                 print('You gained', currentEnemy.val, 'gold')
@@ -78,12 +83,43 @@ def fight():
                 enemyHit()
                 playerData.hp = playerData.hp - enemyDmg
                 print('You took', enemyDmg, 'damage')
+                print('You now have', playerData.hp, 'HP')
                 time.sleep(1)
                 fight()
     if playerIn in ["2"]:
-        print('Not currently functional')
-        time.sleep(1)
-        fight()
+        print('Which item would you like to use? ')
+        print('')
+        print('Health Potion (1)', playerData.health)
+        print('Rage Potion (2)', playerData.rage)
+        playerInp = input()
+        global usedPotion
+        if playerInp in ['1']:
+            if playerData.health >= 1:
+                usedPotion = items.health
+                playerData.health = playerData.health - 1
+                potionBoost()
+                print('you now have', playerData.hp, 'HP')
+                time.sleep(1)
+            else:
+                print('You do not have enough potions')
+                time.sleep(1)
+            fight()
+        if playerInp in ['2']:
+            if playerData.rage >= 1:
+                usedPotion = items.rage
+                playerData.rage = playerData.rage - 1
+                potionBoost()
+                print('You now do', bonusDmg, 'Bonus Damage')
+                time.sleep(1)
+                fight()
+            else:
+                print('You do not have enough potions')
+                time.sleep(1)
+            fight()
+        else:
+            print('That is not a valid input')
+            time.sleep(1)
+            fight()
 
 
 #intro
@@ -93,6 +129,7 @@ name = input('What is your name? ')
 def mainMenu():
     global bonusDmg
     bonusDmg = 0
+    playerData.hp = 10
     clearConsole()
     print('Welcome to the catacombs', name)
     print('')    
@@ -136,16 +173,17 @@ def mainMenu():
 counter = 0
 def floor1():
     clearConsole()
-    global counter
+    global counter, bonusDmg
+    bonusDmg = 0
     counter = counter + 1
     if counter == 10:
         print('Floor Defeated')
         time.sleep(1)
         mainMenu()
     else:
+        global currentEnemy, enemyhp
         generateDungeon()
         if generate ==  1:
-            global currentEnemy
             currentEnemy = enemies.fl1Knight
         if generate == 2:
             currentEnemy = enemies.fl1Rogue
@@ -155,6 +193,7 @@ def floor1():
             currentEnemy = enemies.fl1Rogue
         if generate == 5:
             currentEnemy = enemies.fl1Gold
+        enemyhp = currentEnemy.hp
         fight()
 
     time.sleep(2)
@@ -169,6 +208,7 @@ def floor2():
 def shop():
     clearConsole()
     print('Welcome to the shop')
+    print('You have', playerData.gold, 'gold')
     print('What would you like to purchase?')
     print('')
     print('Health Potion (2 gold) (1)')
@@ -209,7 +249,7 @@ def shop():
                 time.sleep(1)
                 shop()
             else:
-                print("You don't have enough money")
+                print("You don't have enough gold")
                 time.sleep(1)
                 shop()
         except ValueError:
@@ -218,6 +258,10 @@ def shop():
             shop()
     if playerin in ['3']:
         mainMenu()
+    else:
+        print('That is not a valid input')
+        time.sleep
+        shop()
 
 playerData.loadGame
 mainMenu()
